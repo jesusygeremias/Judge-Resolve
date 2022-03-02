@@ -5,16 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
 @Table(name = "judge_resolve_task")
+@NamedQueries({
+        @NamedQuery(name = Task.FIND_ALL, query = "select t from Task t")
+})
 @ToString @EqualsAndHashCode
 public class Task {
+
+    public static final String FIND_ALL = "findAll";
 
     @Id
     @Getter @Setter

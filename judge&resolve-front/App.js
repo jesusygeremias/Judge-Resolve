@@ -18,9 +18,7 @@ export default function App() {
       return response.json()
     })
     .then(data => {
-      console.log(data)
       data.forEach(task => setTaskItems([...taskItems, task.resumen]))
-      countRef.current++;
     })
     .catch(error => console.log("Error de los gordo: " + error));
   }, []);
