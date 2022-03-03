@@ -19,6 +19,7 @@ public class Task {
     public static final String FIND_ALL = "findAll";
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Getter @Setter
     @Column(name = "id")
     private Long id;

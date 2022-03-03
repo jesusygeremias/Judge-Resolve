@@ -3,10 +3,7 @@ package com.judgeandresolve.backendrest.controllers;
 import com.judgeandresolve.backendrest.dao.interfaces.TaskDAO;
 import com.judgeandresolve.backendrest.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/api/createtask", method = RequestMethod.POST)
-    public void createTask(Task task) {
+    public void createTask(@RequestBody Task task) {
         taskDAO.createTask(task);
     }
 

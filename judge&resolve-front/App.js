@@ -1,13 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
 import Task from './components/Task';
+import { setDay, DaysOfWeek } from './utils/Utils'
 
 export default function App() {
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.1.135:8080/api/gettasks', {
+    fetch('http://192.168.1.145:8080/api/gettasks', {
       method: 'GET',
       headers: {
          'Accept': 'application/json',
@@ -18,26 +19,34 @@ export default function App() {
       return response.json()
     })
     .then(data => {
-      data.forEach(task => setTaskItems([...taskItems, task.resumen]))
+      let itemsFromApi = [...taskItems];
+      data.forEach(dataElement => {
+        itemsFromApi = [...itemsFromApi, dataElement.resumen];
+      })
+      setTaskItems(itemsFromApi);
     })
     .catch(error => console.log("Error de los gordo: " + error));
-  }, []);
+  }, [taskItems]);
 
   const handleAddTask = () => {
     Keyboard.dismiss();
-    fetch('http://192.168.1.135:8080/api/createtask', {
+    fetch('http://192.168.1.145:8080/api/createtask', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        //body: JSON.stringify({a: 1, b: 'Textual content'})
+        body: JSON.stringify({ 
+          resumen: task, 
+          resuelta: false, 
+          fechaCreacion: new Date(), 
+          fechaProximoJuicio: setDay(new Date(), DaysOfWeek.SUNDAY)
+        })
       })
       .then(response => {return response.json()})
-      .then(data => this.setState({message: data.name}))
+      .then(data => console.log(data))
       .catch(error => {
-         this.setState({message: error.message});
-         console.log("Error de los gordo");
+         console.log("Error de los gordo: " + error);
       });  
 
     setTaskItems([...taskItems, task])
