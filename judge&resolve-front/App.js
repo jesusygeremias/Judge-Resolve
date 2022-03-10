@@ -1,36 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
 import Task from './components/Task';
-import { setDay, DaysOfWeek } from './utils/Utils'
+import { setDay, DaysOfWeek, useFetch } from './utils/Utils'
 
 export default function App() {
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
+  const { data, isLoading, reloadData} = useFetch({ url: 'http://192.168.1.160:8080/api/gettasks' });
 
   useEffect(() => {
-    fetch('http://192.168.1.145:8080/api/gettasks', {
-      method: 'GET',
-      headers: {
-         'Accept': 'application/json',
-         'Content-Type': 'application/json'
-      }
-    })
-    .then(response => {
-      return response.json()
-    })
-    .then(data => {
-      let itemsFromApi = [...taskItems];
-      data.forEach(dataElement => {
-        itemsFromApi = [...itemsFromApi, dataElement.resumen];
-      })
-      setTaskItems(itemsFromApi);
-    })
-    .catch(error => console.log("Error de los gordo: " + error));
-  }, [taskItems]);
+    let resetData = isLoading;
+    if (resetData && data) {
+      resetData = false;
+      return setTaskItems(data.map(dataElement => dataElement.resumen))
+    }
+  });
 
   const handleAddTask = () => {
     Keyboard.dismiss();
-    fetch('http://192.168.1.145:8080/api/createtask', {
+    fetch('http://192.168.1.160:8080/api/createtask', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -59,7 +47,7 @@ export default function App() {
     setTaskItems(itemsCopy)
   }
 
-  return (
+  return data ? (
     <View style={styles.container}>
       {/* Added this scroll view to enable scrolling when list gets longer than the page */}
       <ScrollView
@@ -101,7 +89,7 @@ export default function App() {
       </KeyboardAvoidingView>
       
     </View>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
